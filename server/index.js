@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var request = require('request');
+var Repo = require('../database/index.js')
 var app = express();
 
 app.use(bodyParser.json());
@@ -29,8 +30,25 @@ app.post('/repos/import', (req, res) => {
   };
 
   request(options, (err, res, body) => {
-    console.log(body.statusCode);
+    body = JSON.parse(body);
     console.log(body);
+
+    for(var i = 0; i < body.length; i++) {  
+      var newRepo = new Repo({
+        user: body[i].owner.login,
+        repoName: body[i].name,
+        repoId: body[i].id,
+        forks: body[i].forks_count
+      });
+
+    newRepo.save((err) => {
+      if(err) {
+        console.log('Error saving to MongoDB');
+      } else {
+        console.log('Data saved to MongoDB');
+      }
+     });
+    }
     console.log('GET request sent to github from SERVER');
   });
 
