@@ -38,18 +38,19 @@ app.post('/repos/import', (req, res) => {
         user: body[i].owner.login,
         repoName: body[i].name,
         repoId: body[i].id,
-        forks: body[i].forks_count
+        forks: body[i].forks_count,
+        repoURL: body[i].full_name
       });
 
     newRepo.save((err) => {
       if(err) {
-        console.log('Error saving to MongoDB');
+        console.log('Error saving to MongoDB!');
       } else {
-        console.log('Data saved to MongoDB');
+        console.log('Data saved to MongoDB!');
       }
      });
     }
-    console.log('GET request sent to github from SERVER');
+    console.log('GET request sent to github from SERVER!');
   });
 
   res.send(); 
@@ -57,7 +58,17 @@ app.post('/repos/import', (req, res) => {
 
 app.get('/repos', function (req, res) {
   // TODO
-
+  Repo.find()
+      .sort({forks: -1})
+      .limit(25)
+      .exec((err, repos) => {
+        if(err) {
+          console.log('Error sending sorted data from MongoDB!')
+        } else {
+          console.log('Data sorted and sent to CLIENT!');
+          res.send(repos);
+        }
+  });
 });
 
 var port = 1128;

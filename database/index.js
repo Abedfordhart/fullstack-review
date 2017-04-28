@@ -6,7 +6,8 @@ var repoSchema = mongoose.Schema({
   user: String,
   repoName: String,
   repoId: {type: Number, unique: true},
-  forks: Number
+  forks: Number,
+  repoURL: String
 });
 
 var Repo = mongoose.model('Repo', repoSchema);

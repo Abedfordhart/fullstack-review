@@ -10,6 +10,24 @@ class App extends React.Component {
     this.state = { 
       repos: []
     }
+  }
+
+  componentWillMount () {
+    // var context = this;
+    $.ajax({
+      type: 'GET',
+      url: 'http://127.0.0.1:1128/repos',
+      contentType: 'application/JSON',
+      success: (data) => {
+        console.log(data);
+        this.setState({
+          repos: data
+        });
+      },
+      error: () => {
+        console.log('Error sending GET to Express server!')
+      }
+    });
 
   }
 
@@ -21,11 +39,26 @@ class App extends React.Component {
       url: 'http://127.0.0.1:1128/repos/import',
       contentType: 'application/JSON',
       data: JSON.stringify({'username': term}),
-      success: function (data) {
+      success: (data) => {
         console.log('Post successful!')
       },
-      error: function (error) {
-        console.log('Error posting to Express server!')
+      error: (error) => {
+        console.log('Error sending POST to Express server!')
+      }
+    });  
+
+    $.ajax({
+      type: 'GET',
+      url: 'http://127.0.0.1:1128/repos',
+      contentType: 'application/JSON',
+      success: (data) => {
+        console.log(data);
+        this.setState({
+          repos: data
+        });
+      },
+      error: () => {
+        console.log('Error sending GET to Express server!')
       }
     });
   }
@@ -36,7 +69,7 @@ class App extends React.Component {
       <RepoList repos={this.state.repos}/>
       <Search onSearch={this.search.bind(this)}/>
     </div>)
+   }
   }
-}
 
 ReactDOM.render(<App />, document.getElementById('app'));
